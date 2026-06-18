@@ -1,0 +1,11 @@
+bin/
+obj/
+**/bin/
+**/obj/
+
+.vs/
+.vscode/
+.dotnet_home/
+
+*.user
+*.suo

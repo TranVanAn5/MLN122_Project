@@ -12,7 +12,7 @@ Web game quiz 10 nguoi theo format:
 
 - Backend: ASP.NET Core 9 Minimal API
 - Realtime: Server-Sent Events (SSE) + REST actions
-- Frontend: HTML/CSS/JavaScript local trong `wwwroot`
+- Frontend: React 18 + HTML/CSS trong `Frontend`
 - State: SQL Server qua Entity Framework Core
 
 Phong, nguoi choi, cau tra loi, dau tu va diem hien duoc luu trong SQL Server. Restart server khong lam mat phong da tao.
@@ -21,7 +21,7 @@ Phong, nguoi choi, cau tra loi, dau tu va diem hien duoc luu trong SQL Server. R
 
 ```powershell
 $env:DOTNET_CLI_HOME='C:\MLN122\.dotnet_home'
-dotnet run --project GameServer\GameServer.csproj --urls http://localhost:5127
+dotnet run --project Backend\GameServer.csproj --urls http://localhost:5127
 ```
 
 Mo trinh duyet tai:
@@ -30,14 +30,14 @@ Mo trinh duyet tai:
 http://localhost:5127
 ```
 
-Frontend hien tai khong can CDN, chi can backend ASP.NET Core dang chay.
+Frontend duoc render bang React 18 tu CDN va duoc backend ASP.NET Core serve truc tiep, nen khong can chay frontend dev server rieng.
 
 ## SQL Server va migration
 
 Connection string nam trong:
 
-- `GameServer/appsettings.json`
-- `GameServer/appsettings.Development.json`
+- `Backend/appsettings.json`
+- `Backend/appsettings.Development.json`
 
 Mac dinh dang dung SQL Server tren port `1433`:
 
@@ -49,7 +49,7 @@ Tao database bang migration:
 
 ```powershell
 $env:DOTNET_CLI_HOME='C:\MLN122\.dotnet_home'
-dotnet ef database update --project GameServer\GameServer.csproj --startup-project GameServer\GameServer.csproj
+dotnet ef database update --project Backend\GameServer.csproj --startup-project Backend\GameServer.csproj
 ```
 
 Neu dung SQL Server Express:
@@ -64,7 +64,7 @@ Neu dung tai khoan SQL:
 Server=localhost,1433;Database=MLN122Db;User Id=sa;Password=YOUR_PASSWORD;TrustServerCertificate=True;Encrypt=False
 ```
 
-Script SQL da duoc xuat tai `GameServer/Data/Migrations/InitialCreate.sql`.
+Script SQL da duoc xuat tai `Backend/Data/Migrations/InitialCreate.sql`.
 
 App tu dong chay migration khi khoi dong neu `Database:AutoMigrate` la `true`.
 
@@ -110,9 +110,13 @@ Neu deploy nhieu instance app sau load balancer, SSE van doc lai state tu SQL Se
 
 ## Cau truc chinh
 
-- `GameServer/Program.cs`: cau hinh API, static files va SignalR hub.
-- `GameServer/Hubs/GameHub.cs`: cac lenh realtime tu host/player.
-- `GameServer/Services/GameStateService.cs`: logic phong, diem, loai, dau tu, ket qua.
-- `GameServer/Models/GameModels.cs`: room, player, question, answer, investment, snapshot.
-- `GameServer/wwwroot/index.html`: shell frontend.
-- `GameServer/wwwroot/app.js`: React UI mot trang.
+- `Frontend/index.html`: shell frontend va script React CDN.
+- `Frontend/app.js`: React UI mot trang va cac lenh goi API.
+- `Frontend/styles.css`: giao dien frontend, responsive layout va animation.
+- `Backend/Program.cs`: cau hinh DI, database, static files va SignalR hub.
+- `Backend/Presentation/Endpoints/GameEndpoints.cs`: REST API va SSE endpoints.
+- `Backend/Presentation/Hubs/GameHub.cs`: cac lenh realtime tu host/player.
+- `Backend/Presentation/Requests/GameRequests.cs`: request DTO cho API.
+- `Backend/Business/Services/GameStateService.cs`: logic phong, diem, loai, dau tu, ket qua.
+- `Backend/Business/Models/GameModels.cs`: room, player, question, answer, investment, snapshot.
+- `Backend/Data`: EF Core DbContext, entities va migrations.

@@ -1,0 +1,8 @@
+@GameServer_HostAddress = http://localhost:5182
+
+POST {{GameServer_HostAddress}}/api/rooms
+Content-Type: application/json
+
+{
+  "hostName": "Host"
+}
